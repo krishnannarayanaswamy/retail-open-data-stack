@@ -1,0 +1,20 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "webstore-ui"
+  namespace: "default"
+  labels:
+    app: "webstore-ui"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "webstore-ui"
+  template:
+    metadata:
+      labels:
+        app: "webstore-ui"
+    spec:
+      containers:
+      - name: "webstore-ui"
+        image: "knscassandra/apac-fe-demo-webstore-ui:latest"

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stargate
+  labels:
+    app: stargate
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: stargate
+  template:
+    metadata:
+      labels:
+        app: stargate
+    spec:
+      containers:
+      - name: stargate
+        image: "stargateio/stargate-dse-68:v1.0.40"
+        ports:
+          - name: graphql
+            containerPort: 8080
+            protocol: TCP
+          - name: authorization
+            containerPort: 8081
+            protocol: TCP
+          - name: rest
+            containerPort: 8082
+            protocol: TCP
+        env:
+          - name: CLUSTER_NAME
+            value: "retailcdc-demo"
+          - name: CLUSTER_VERSION
+            value: "6.8"
+          - name: ENABLE_AUTH
+            value: "true"
+          - name: SIMPLE_SNITCH
+            value: "true"
+          - name: SEED
+            value: "retailcdc-demo-seed-service"
+          - name: DSE
+            value: "true"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: stargate
+spec:
+  type: LoadBalancer
+  selector:
+    app: stargate
+  ports:
+  - name: graphql
+    port: 8080
+    targetPort: 8080
+  - name: authorization
+    port: 8081
+    targetPort: 8081
+  - name: rest
+    port: 8082
+    targetPort: 8082
